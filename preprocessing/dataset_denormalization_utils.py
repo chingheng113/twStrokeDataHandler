@@ -1,14 +1,5 @@
+from preprocessing import genral_utils as gu
 import csv
-import os
-
-data_source_path = 'data_source'
-raw_data_source_path = data_source_path+os.sep+'raw'+os.sep
-
-def get_file_path(file_name):
-    dirname = os.path.dirname(__file__)
-    filepath = os.path.join(dirname, '..' + os.sep + raw_data_source_path)
-    return os.path.join(filepath + file_name)
-
 
 def get_hist_value(parents_v, brsi_v):
         # 0-no; 1-yes; 2-down't know; 9-no sibling
@@ -23,15 +14,6 @@ def get_hist_value(parents_v, brsi_v):
         else:
             return ""
 
-
-def write_denor_file(file_name, title, patients_dic):
-    write_file_path = get_file_path(file_name+'.csv')
-    with open(write_file_path, 'w') as write_csv:
-        w = csv.DictWriter(write_csv, title)
-        w.writeheader()
-        for d in patients_dic.keys():
-            p_dic = patients_dic[d]
-            w.writerow(p_dic)
 
 def de_casedbmrs():
     patients_dic = {}
@@ -48,7 +30,7 @@ def de_casedbmrs():
                 '9.00': 'Bowel_control',
                 '10.00': 'Bladder_control',
                 '11.00': 'discharged_mrs'}
-    read_file_path = get_file_path('CASEDBMRS.csv')
+    read_file_path = gu.get_file_path('CASEDBMRS.csv')
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -70,7 +52,8 @@ def de_casedbmrs():
                 key = bid_code.get(bid_nm)
                 p_dic[key] = botv_nm
                 patients_dic[combind_id] = p_dic
-    write_denor_file('CASEDBMRS(denormalized)', title, patients_dic)
+    gu.save_file('CASEDBMRS(denormalized)', title, patients_dic)
+
 
 def de_casedctmr():
     patients_dic = {}
@@ -96,7 +79,7 @@ def de_casedctmr():
                 '10': 'Hemorrhagic_infarct',
                 '11': 'Old_stroke'}
 
-    read_file_path = get_file_path('CASEDCTMR.csv')
+    read_file_path = gu.get_file_path('CASEDCTMR.csv')
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -152,7 +135,7 @@ def de_casedctmr():
                     p_dic[key + '_mrici'] = mriright_fl
                     p_dic[key + '_mrich'] = mrileft_fl
                 patients_dic[combind_id] = p_dic
-    write_denor_file('CASEDCTMR(denormalized)', title, patients_dic)
+    gu.save_file('CASEDCTMR(denormalized)', title, patients_dic)
 
 
 def de_casedfahi():
@@ -163,7 +146,7 @@ def de_casedfahi():
                     '2': 'FH_DB',
                     '3': 'FH_HD',
                     '4': 'FH_ST'}
-    read_file_path = get_file_path('CASEDFAHI.csv')
+    read_file_path = gu.get_file_path('CASEDFAHI.csv')
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -183,7 +166,7 @@ def de_casedfahi():
                 key = diseace_code.get(fahiid_id)
                 p_dic[key] = get_hist_value(parents_v, brsi_v)
                 patients_dic[combind_id] = p_dic
-    write_denor_file('CASEDFAHI(denormalized)', title, patients_dic)
+    gu.save_file('CASEDFAHI(denormalized)', title, patients_dic)
 
 
 def de_casedrfur():
@@ -192,7 +175,7 @@ def de_casedrfur():
              'VERS_1', 'VERS_3', 'VERS_6', 'VERS_12',
              'VEIHD_1', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12',
              'MRS_1', 'MRS_3', 'MRS_6', 'MRS_12']
-    read_file_path = get_file_path('CASEDRFUR-2016-05-23.csv')
+    read_file_path = gu.get_file_path('CASEDRFUR-2016-05-23.csv')
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -217,4 +200,60 @@ def de_casedrfur():
                 p_dic['VEIHD_' + rfur_nm] = veihd_fl
                 p_dic['MRS_' + rfur_nm] = mrs_tx
                 patients_dic[combind_id] = p_dic
-    write_denor_file('CASEDRFUR(denormalized)', title, patients_dic)
+    gu.save_file('CASEDRFUR(denormalized)', title, patients_dic)
+
+
+def de_casednihs():
+    patients_dic = {}
+    title = ['ICASE_ID', 'IDCASE_ID',
+             'NIHS_1a_in', 'NIHS_1b_in', 'NIHS_1c_in', 'NIHS_2_in', 'NIHS_3_in', 'NIHS_4_in', 'NIHS_5aL_in',
+             'NIHS_5bR_in', 'NIHS_6aL_in', 'NIHS_6bR_in', 'NIHS_7_in', 'NIHS_8_in', 'NIHS_9_in', 'NIHS_10_in',
+             'NIHS_11_in', 'NIHS_1a_out', 'NIHS_1b_out', 'NIHS_1c_out', 'NIHS_2_out', 'NIHS_3_out', 'NIHS_4_out',
+             'NIHS_5aL_out', 'NIHS_5bR_out', 'NIHS_6aL_out', 'NIHS_6bR_out', 'NIHS_7_out', 'NIHS_8_out', 'NIHS_9_out',
+             'NIHS_10_out', 'NIHS_11_out']
+    test_code = {
+        '1.10': 'NIHS_1a',
+        '1.20': 'NIHS_1b',
+        '1.30': 'NIHS_1c',
+        '2.00': 'NIHS_2',
+        '3.00': 'NIHS_3',
+        '4.00': 'NIHS_4',
+        '5.10': 'NIHS_5aL',
+        '5.20': 'NIHS_5bR',
+        '6.10': 'NIHS_6aL',
+        '6.20': 'NIHS_6bR',
+        '7.00': 'NIHS_7',
+        '8.00': 'NIHS_8',
+        '9.00': 'NIHS_9',
+        '10.00': 'NIHS_10',
+        '11.00': 'NIHS_11'}
+    read_file_path = gu.get_file_path('CASEDNIHS.csv')
+    with open(read_file_path, 'r', encoding='utf8') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            icase_id = row['ICASE_ID']
+            idcase_id = row['IDCASE_ID']
+            combind_id = icase_id + idcase_id
+            nid_nm = row['NID_NM']
+            ninv_nm = row['NINV_NM']
+            notv_nm = row['NOTV_NM']
+            if combind_id in patients_dic.keys():
+                key = test_code.get(nid_nm)
+                patients_dic.get(combind_id)[key + '_in'] = ninv_nm
+                patients_dic.get(combind_id)[key + '_out'] = notv_nm
+            else:
+                # initial a patient's dictionary
+                p_dic = {'ICASE_ID': icase_id, 'IDCASE_ID': idcase_id,
+                         'NIHS_1a_in': '', 'NIHS_1b_in': '', 'NIHS_1c_in': '', 'NIHS_2_in': '', 'NIHS_3_in': '',
+                         'NIHS_4_in': '', 'NIHS_5aL_in': '', 'NIHS_5bR_in': '', 'NIHS_6aL_in': '', 'NIHS_6bR_in': '',
+                         'NIHS_7_in': '', 'NIHS_8_in': '', 'NIHS_9_in': '', 'NIHS_10_in': '', 'NIHS_11_in': '',
+                         'NIHS_1a_out': '', 'NIHS_1b_out': '', 'NIHS_1c_out': '', 'NIHS_2_out': '', 'NIHS_3_out': '',
+                         'NIHS_4_out': '', 'NIHS_5aL_out': '', 'NIHS_5bR_out': '', 'NIHS_6aL_out': '',
+                         'NIHS_6bR_out': '', 'NIHS_7_out': '', 'NIHS_8_out': '', 'NIHS_9_out': '', 'NIHS_10_out': '',
+                         'NIHS_11_out': ''
+                         }
+                key = test_code.get(nid_nm)
+                p_dic[key + '_in'] = ninv_nm
+                p_dic[key + '_out'] = notv_nm
+                patients_dic[combind_id] = p_dic
+    gu.save_file('CASEDNIHS(denormalized)', title, patients_dic)
