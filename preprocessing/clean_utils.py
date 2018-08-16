@@ -1,4 +1,4 @@
-from preprocessing import genral_utils as gu
+from tools import genral_utils as gu
 import pandas as pd
 import numpy as np
 
@@ -19,16 +19,12 @@ def outliers_iqr(ys):
 def out_of_range(ys, r):
     ys = ys.apply(pd.to_numeric, errors='coerce')
     r = np.asarray(r).astype(float)
-    # boo = ~ys.isin(r)
-    boo2 = ~ys.isin(r)
-    return boo2
+    return ~ys.isin(r)
 
 
 def replace_flg(df, cols):
     df[cols] = df[cols].replace({'N': '0', 'Y': '1'})
     df[cols] = df[cols].replace(to_replace=r"[^0-1]", value=np.NaN, regex=True)
-    # for col in cols:
-    #     df.loc[out_of_range(df[col], ['0', '1']), col] = np.nan
     return df
 
 
@@ -47,7 +43,7 @@ def not_icd(ys):
 
 def clean_case():
     fn = 'CASEDCASE-2016-05-2.csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_case = pd.read_csv(read_file_path, encoding='utf8')
     # Dropping unused column
     df_case = df_case.drop(
@@ -74,12 +70,11 @@ def clean_case():
                     'CRP_NM', 'HBAC_NM', 'AC_NM', 'UA_NM', 'TCHO_NM', 'TG_NM', 'HDL_NM', 'LDL_NM', 'GOT_NM', 'GPT_NM',
                     'HB_NM', 'HCT_NM', 'PLATELET_NM', 'WBC_NM', 'PTT1_NM', 'PTT2_NM', 'PTINR_NM', 'ER_NM', 'BUN_NM',
                     'CRE_NM', 'ALB_NM', 'CRP_NM', 'HBAC_NM', 'AC_NM', 'UA_NM', 'TCHO_NM', 'TG_NM', 'HDL_NM', 'LDL_NM',
-                    'GOT_NM', 'GPT_NM', 'OMWA_TX'
-                    ]
+                    'GOT_NM', 'GPT_NM', 'OMWA_TX']
+    df_case[outlier_cols] = df_case[outlier_cols].replace(999.9, np.nan)
     for col in outlier_cols:
-        df_case[col] = df_case[col].replace(999.9, np.nan)
         df_case.loc[outliers_iqr(df_case[col]), col] = np.nan
-        df_case[col] = df_case[col].apply(pd.to_numeric, errors='coerce')
+    df_case[outlier_cols] = df_case[outlier_cols].apply(pd.to_numeric, errors='coerce')
     # Replace un-coded value to Nan
     df_case.loc[out_of_range(df_case['OPC_ID'], ['1', '2', '3']), 'OPC_ID'] = np.nan
     df_case.loc[out_of_range(df_case['GCSE_NM'], ['1', '2', '3', '4', '5', '6']), 'GCSE_NM'] = np.nan
@@ -131,7 +126,7 @@ def clean_case():
 
 def clean_dbmrs():
     fn = 'CASEDBMRS(denormalized).csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_dbmrs = pd.read_csv(read_file_path, encoding='utf8')
     df_dbmrs.loc[out_of_range(df_dbmrs['Feeding'], ['0', '5', '10']), 'Feeding'] = np.nan
     df_dbmrs.loc[out_of_range(df_dbmrs['Transfers'], ['0', '5', '10', '15']), 'Transfers'] = np.nan
@@ -149,7 +144,7 @@ def clean_dbmrs():
 
 def clean_ctmr():
     fn = 'CASEDCTMR(denormalized).csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_ctmr = pd.read_csv(read_file_path, encoding='utf8')
     df_ctmr.iloc[:, 2:df_ctmr.shape[1]] = df_ctmr.iloc[:, 2:df_ctmr.shape[1]].replace({'N': '0', 'Y': '1'})
     return df_ctmr
@@ -157,7 +152,7 @@ def clean_ctmr():
 
 def clean_dgfa():
     fn = 'CASEDDGFA.csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_dgfa = pd.read_csv(read_file_path, encoding='utf8')
     df_dgfa = df_dgfa.drop('IPROTOCOL_ID', axis=1)
     df_dgfa = df_dgfa.drop(['HDMT_ID', 'PCVAMT_ID', 'POMT_ID', 'UA_ID', 'UAMT_ID', 'URMT_ID',
@@ -185,14 +180,14 @@ def clean_dgfa():
 
 def clean_fahi():
     fn = 'CASEDFAHI(denormalized).csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_fahi = pd.read_csv(read_file_path, encoding='utf8')
     return df_fahi
 
 
 def clean_nihs():
     fn = 'CASEDNIHS(denormalized).csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_nihs = pd.read_csv(read_file_path, encoding='utf8')
     df_nihs.loc[out_of_range(df_nihs['NIHS_1a_in'], ['0', '1', '2', '3']), 'NIHS_1a_in'] = np.nan
     df_nihs.loc[out_of_range(df_nihs['NIHS_1a_out'], ['0', '1', '2', '3']), 'NIHS_1a_out'] = np.nan
@@ -229,7 +224,7 @@ def clean_nihs():
 
 def clean_rfur():
     fn = 'CASEDRFUR(denormalized).csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_rfur = pd.read_csv(read_file_path, encoding='utf8')
     rfur_cols = ['VERS_1', 'VERS_3', 'VERS_6', 'VERS_12', 'VEIHD_1', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12']
     df_rfur[rfur_cols] = df_rfur[rfur_cols].replace({'N': '0', 'Y': '1'})
@@ -242,7 +237,7 @@ def clean_rfur():
 
 def clean_mcase():
     fn = 'CASEMCASE.csv'
-    read_file_path = gu.get_file_path(fn)
+    read_file_path = gu.get_file_path(fn, under_raw=True)
     df_mcase = pd.read_csv(read_file_path, encoding='utf8')
     df_mcase = df_mcase.drop(['IPROTOCOL_ID', 'CNAME_TX', 'CID_ID'], axis=1)
     df_mcase['GENDER_TX'] = df_mcase['GENDER_TX'].replace({'F': '0', 'M': '1'})
@@ -264,7 +259,6 @@ def create_age(df_case, df_mcase):
 
 
 def convert_features(df):
-    # df = pd.read_csv('look2.csv', encoding='utf8')
     tpa_flg = {}
     icd = {}
     cdr_id = {}
@@ -330,4 +324,14 @@ def convert_features(df):
     df['MCDBA_ID'] = mcdba_id.values()
     df['MCDRI_ID'] = mcdri_id.values()
     df['MCDLI_ID'] = mcdli_id.values()
+    return df
+
+
+def make_dummy(df):
+    category_features = ['OPC_ID', 'ICD_ID', 'ICD_CODE', 'OFF_ID', 'OFFDT_ID']
+    for fe in category_features:
+        dummies = pd.get_dummies(df[fe], prefix=fe)
+        for i, dummy in enumerate(dummies):
+            df.insert(loc=df.columns.get_loc(fe)+i+1, column=dummy, value=dummies[dummy].values)
+    df.drop(category_features, axis=1, inplace=True)
     return df

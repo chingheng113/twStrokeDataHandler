@@ -1,4 +1,4 @@
-from preprocessing import genral_utils as gu
+from tools import genral_utils as gu
 import csv
 
 def get_hist_value(parents_v, brsi_v):
@@ -30,7 +30,7 @@ def de_casedbmrs():
                 '9.00': 'Bowel_control',
                 '10.00': 'Bladder_control',
                 '11.00': 'discharged_mrs'}
-    read_file_path = gu.get_file_path('CASEDBMRS.csv')
+    read_file_path = gu.get_file_path('CASEDBMRS.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -52,7 +52,7 @@ def de_casedbmrs():
                 key = bid_code.get(bid_nm)
                 p_dic[key] = botv_nm
                 patients_dic[combind_id] = p_dic
-    gu.save_file('CASEDBMRS(denormalized)', title, patients_dic)
+    gu.save_array_to_csv('CASEDBMRS(denormalized)', title, patients_dic, under_raw=True)
 
 
 def de_casedctmr():
@@ -79,7 +79,7 @@ def de_casedctmr():
                 '10': 'Hemorrhagic_infarct',
                 '11': 'Old_stroke'}
 
-    read_file_path = gu.get_file_path('CASEDCTMR.csv')
+    read_file_path = gu.get_file_path('CASEDCTMR.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -135,7 +135,7 @@ def de_casedctmr():
                     p_dic[key + '_mrici'] = mriright_fl
                     p_dic[key + '_mrich'] = mrileft_fl
                 patients_dic[combind_id] = p_dic
-    gu.save_file('CASEDCTMR(denormalized)', title, patients_dic)
+    gu.save_array_to_csv('CASEDCTMR(denormalized)', title, patients_dic, under_raw=True)
 
 
 def de_casedfahi():
@@ -146,7 +146,7 @@ def de_casedfahi():
                     '2': 'FH_DB',
                     '3': 'FH_HD',
                     '4': 'FH_ST'}
-    read_file_path = gu.get_file_path('CASEDFAHI.csv')
+    read_file_path = gu.get_file_path('CASEDFAHI.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -166,7 +166,7 @@ def de_casedfahi():
                 key = diseace_code.get(fahiid_id)
                 p_dic[key] = get_hist_value(parents_v, brsi_v)
                 patients_dic[combind_id] = p_dic
-    gu.save_file('CASEDFAHI(denormalized)', title, patients_dic)
+    gu.save_array_to_csv('CASEDFAHI(denormalized)', title, patients_dic, under_raw=True)
 
 
 def de_casedrfur():
@@ -175,7 +175,7 @@ def de_casedrfur():
              'VERS_1', 'VERS_3', 'VERS_6', 'VERS_12',
              'VEIHD_1', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12',
              'MRS_1', 'MRS_3', 'MRS_6', 'MRS_12']
-    read_file_path = gu.get_file_path('CASEDRFUR-2016-05-23.csv')
+    read_file_path = gu.get_file_path('CASEDRFUR-2016-05-23.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -200,7 +200,7 @@ def de_casedrfur():
                 p_dic['VEIHD_' + rfur_nm] = veihd_fl
                 p_dic['MRS_' + rfur_nm] = mrs_tx
                 patients_dic[combind_id] = p_dic
-    gu.save_file('CASEDRFUR(denormalized)', title, patients_dic)
+    gu.save_array_to_csv('CASEDRFUR(denormalized)', title, patients_dic, under_raw=True)
 
 
 def de_casednihs():
@@ -227,7 +227,7 @@ def de_casednihs():
         '9.00': 'NIHS_9',
         '10.00': 'NIHS_10',
         '11.00': 'NIHS_11'}
-    read_file_path = gu.get_file_path('CASEDNIHS.csv')
+    read_file_path = gu.get_file_path('CASEDNIHS.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -256,4 +256,4 @@ def de_casednihs():
                 p_dic[key + '_in'] = ninv_nm
                 p_dic[key + '_out'] = notv_nm
                 patients_dic[combind_id] = p_dic
-    gu.save_file('CASEDNIHS(denormalized)', title, patients_dic)
+    gu.save_array_to_csv('CASEDNIHS(denormalized)', title, patients_dic, under_raw=True)
