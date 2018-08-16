@@ -1,7 +1,9 @@
 from tools import genral_utils as gu
 from preprocessing import mRS_validator as mv
 from preprocessing import clean_utils as clnUtil
+from preprocessing import remove_missing_utils as nomissUtil
 import pandas as pd
+from functools import reduce
 
 
 if __name__ == '__main__':
@@ -40,6 +42,7 @@ if __name__ == '__main__':
     # df_3m.drop(df_3m[df_3m.OFF_ID == 2.].index, inplace=True)
     #  ===================== Make dummy variables
     # df_3m = clnUtil.make_dummy(df_3m)
+    # gu.save_dataframe_to_csv(df_3m, 'wholeset_Jim_nomissing')
     #  ===================== validated mRS
     df_3m = pd.read_csv(gu.get_file_path('wholeset_Jim_nomissing.csv', under_raw=False), encoding='utf8')
     df_3m_validated = mv.mRS_validate(df_3m)

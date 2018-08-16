@@ -1,7 +1,7 @@
 from tools import genral_utils as gu
 import pandas as pd
 import numpy as np
-
+import math
 
 def outliers_iqr(ys):
     '''
@@ -280,9 +280,13 @@ def convert_features(df):
         else:
             tpa_flg[i] = np.nan
         # -----------------------------------
-        icd_t = str(row['ICD_TX'])
-        parent = icd_t.split('.')[0]
-        icd[i] = parent
+        if ~pd.isna(row['ICD_TX']):
+            icd_t = str(row['ICD_TX'])
+            parent = icd_t.split('.')[0]
+            if parent != 'nan':
+                icd[i] = parent
+            else:
+                icd[i] = np.nan
         # -----------------------------------
         if row['CD_ID'] == 0.:
             cdr_id[i] = 0.

@@ -30,8 +30,8 @@ def mRS_validate(df):
     df_valied = logic_validate(df)
     df_valied = clust_validation(df_valied)
     df_valied = nihss_bi_iqr(df_valied)
-    # df_valied = curve_validation(df_valied)
-    # df_valied = df_valied.drop(['bi_total', 'nihss_total'], axis=1)
+    df_valied = curve_validation(df_valied)
+    df_valied = df_valied.drop(['bi_total', 'nihss_total'], axis=1)
     return df_valied
 
 
@@ -172,13 +172,13 @@ def curve_validation(df):
     plt.ylabel("bi_total")
     plt.show()
     # ----- Curve Fit
-    popt, pcov = curve_fit(func, df['nihss_total'], df['bi_total'])
-    plt.plot(df['nihss_total'], df['bi_total'], 'o')
-    y2 = [func(i, popt[0], popt[1], popt[2]) for i in df['nihss_total']]
-    plt.plot(df['nihss_total'], y2, 'o')
-    plt.xlabel("nihss_total")
-    plt.ylabel("bi_total")
-    plt.show()
+    # popt, pcov = curve_fit(func, df['nihss_total'], df['bi_total'])
+    # plt.plot(df['nihss_total'], df['bi_total'], 'o')
+    # y2 = [func(i, popt[0], popt[1], popt[2]) for i in df['nihss_total']]
+    # plt.plot(df['nihss_total'], y2, 'o')
+    # plt.xlabel("nihss_total")
+    # plt.ylabel("bi_total")
+    # plt.show()
     # --- Hyperbolic Fit
     # https: // github.com / jimrybarski / biofits
     # perform the fit
