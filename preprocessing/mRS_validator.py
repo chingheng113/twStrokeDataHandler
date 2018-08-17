@@ -31,7 +31,7 @@ def mRS_validate(df):
     df_valied = clust_validation(df_valied)
     df_valied = nihss_bi_iqr(df_valied)
     df_valied = curve_validation(df_valied)
-    df_valied = df_valied.drop(['bi_total', 'nihss_total'], axis=1)
+    df_valied = df_valied.drop(['bi_total', 'nihss_total', 'nihss_total_in'], axis=1)
     return df_valied
 
 

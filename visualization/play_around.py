@@ -34,7 +34,7 @@ if __name__ == '__main__':
 
     # -- Plot
     fig = plt.figure(figsize=(15, 5))
-    pu.bubble_plot(bi_mrs, ['discharged_mrs', 'bi_total'])
+    pu.bubble_plot(bi_mrs_validated, ['discharged_mrs', 'bi_total'])
     # pu.violin_plot(nih_mrs)
     # pu.violin_plot(bi_mrs_validated)
     # nih_mrs.boxplot(column=['bi_total'], by='nihss_total')
