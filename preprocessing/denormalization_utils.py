@@ -4,13 +4,13 @@ import csv
 def get_hist_value(parents_v, brsi_v):
         # 0-no; 1-yes; 2-down't know; 9-no sibling
         if parents_v == '0' and (brsi_v == '0' or brsi_v == '9'):
-            return 0
+            return 0 # 父母兄弟姐妹皆無
         elif parents_v == '0' and brsi_v == '1':
-            return 1
+            return 1 # 兄弟姐妹有, 父母無
         elif parents_v == '1' and (brsi_v == '0' or brsi_v == '9'):
-            return 2
+            return 2 # 兄弟姐妹無, 父母有
         elif parents_v == '1' and brsi_v == '1':
-            return 3
+            return 3 # 父母兄弟姐妹皆有
         else:
             return ""
 

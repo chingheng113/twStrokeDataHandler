@@ -1,7 +1,8 @@
 from tools import genral_utils as gu
 import pandas as pd
 import numpy as np
-import math
+from sklearn.preprocessing import Imputer
+
 
 def outliers_iqr(ys):
     '''
@@ -29,7 +30,19 @@ def replace_flg(df, cols):
 
 
 def not_icd(ys):
-    icds = ['434', '431', '435', '436', '433', '430', '437']
+    '''
+    腦中風的ICD-9號碼為
+    430 (蜘蛛網膜下腔出血)
+    431 (腦內出血)
+    432 (其他及未明示的顱內出血)
+    433 (腦前動脈阻塞及狹窄)
+    434(腦動脈阻塞)
+    435 (暫時性腦部缺氧)
+    436(診斷欠明之急性腦血管疾病)
+    437 (其他及診斷欠明之急性腦血管疾病)
+    438 (腦血管疾病後期影響)。
+    '''
+    icds = ['430', '431', '432', '433', '434', '435', '436', '437', '438']
     code = str(ys)
     parent = code.split('.')[0]
     if len(parent) != 3:
@@ -64,7 +77,7 @@ def clean_case():
         axis=1)
     # Replace NULL to NaN
     df_case.replace('NULL', np.nan)
-    # Replace outlier to NAN
+    # Replace outlier to Median
     outlier_cols = ['HEIGHT_NM', 'WEIGHT_NM', 'SBP_NM', 'DBP_NM', 'BT_NM', 'HR_NM', 'RR_NM', 'HB_NM', 'HCT_NM',
                     'PLATELET_NM', 'WBC_NM', 'PTT1_NM', 'PTT2_NM', 'PTINR_NM', 'ER_NM', 'BUN_NM', 'CRE_NM', 'ALB_NM',
                     'CRP_NM', 'HBAC_NM', 'AC_NM', 'UA_NM', 'TCHO_NM', 'TG_NM', 'HDL_NM', 'LDL_NM', 'GOT_NM', 'GPT_NM',
@@ -75,12 +88,13 @@ def clean_case():
     for col in outlier_cols:
         df_case.loc[outliers_iqr(df_case[col]), col] = np.nan
     df_case[outlier_cols] = df_case[outlier_cols].apply(pd.to_numeric, errors='coerce')
+    df_case[outlier_cols] = Imputer(missing_values=np.nan, strategy='mean', axis=0).fit_transform(df_case[outlier_cols])
     # Replace un-coded value to Nan
     df_case.loc[out_of_range(df_case['OPC_ID'], ['1', '2', '3']), 'OPC_ID'] = np.nan
     df_case.loc[out_of_range(df_case['GCSE_NM'], ['1', '2', '3', '4', '5', '6']), 'GCSE_NM'] = np.nan
     df_case.loc[out_of_range(df_case['GCSV_NM'], ['1', '2', '3', '4', '5', '6']), 'GCSV_NM'] = np.nan
     df_case.loc[out_of_range(df_case['GCSM_NM'], ['1', '2', '3', '4', '5', '6']), 'GCSM_NM'] = np.nan
-    df_case.loc[out_of_range(df_case['ICD_ID'], ['1', '2', '3', '4']), 'ICD_ID'] = np.nan
+    df_case.loc[out_of_range(df_case['ICD_ID'], ['1', '2', '3', '4', '99']), 'ICD_ID'] = np.nan
     df_case.loc[out_of_range(df_case['ICDTIA_ID'], ['1', '2']), 'ICDTIA_ID'] = np.nan
     df_case.loc[out_of_range(df_case['TOAST_ID'], ['1', '2', '3', '4', '5']), 'TOAST_ID'] = np.nan
     df_case.loc[out_of_range(df_case['TOASTU_ID'], ['1', '2', '3']), 'TOASTU_ID'] = np.nan

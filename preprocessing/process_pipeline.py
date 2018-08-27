@@ -9,11 +9,11 @@ from functools import reduce
 
 if __name__ == '__main__':
     # ===================== Dataset structure denormalization
-    deUtil.de_casedbmrs()
-    deUtil.de_casedctmr()
-    deUtil.de_casedfahi()
-    deUtil.de_casedrfur()
-    deUtil.de_casednihs()
+    # deUtil.de_casedbmrs()
+    # deUtil.de_casedctmr()
+    # deUtil.de_casedfahi()
+    # deUtil.de_casedrfur()
+    # deUtil.de_casednihs()
     # =====================  Datasets cleaning
     df_case = clnUtil.clean_case()
     df_mcase = clnUtil.clean_mcase()
@@ -33,6 +33,7 @@ if __name__ == '__main__':
 
     #  ######################################################## 3-month mRS#############################################
     #  ===================== Remove high missing features
+    # df_org = pd.read_csv(gu.get_file_path('wholeset_Jim.csv', under_raw=False), encoding='utf8')
     df_3m = nomissUtil.remove_missing_intensive_features(df_org)
     #  nomissUtil.plot_missing(df_3m)
     #  ===================== only 3-month followup
@@ -47,6 +48,5 @@ if __name__ == '__main__':
     #  ===================== validated mRS
     # df_3m = pd.read_csv(gu.get_file_path('wholeset_Jim_nomissing.csv', under_raw=False), encoding='utf8')
     df_3m_validated = mv.mRS_validate(df_3m)
-
     gu.save_dataframe_to_csv(df_3m_validated, 'wholeset_Jim_nomissing_validated')
     print("Done")
