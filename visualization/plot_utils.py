@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def scatt_plot(data):
     data.plot.scatter(x=data.columns[0], y=data.columns[1], c=data.columns[2], cmap=plt.cm.Spectral)
     plt.show()
