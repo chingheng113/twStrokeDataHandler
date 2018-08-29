@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     seed = 7
-    n_class = 7
+    n_class = 2
 
     if n_class == 2:
         id_data, x_data, y_data = genral_utils.get_poor_god('wholeset_Jim_nomissing_validated.csv')
