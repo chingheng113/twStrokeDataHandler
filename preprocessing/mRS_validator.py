@@ -29,7 +29,8 @@ def mRS_validate(df):
                                                    'NIHS_9_in', 'NIHS_10_in', 'NIHS_11_in']], axis=1))
 
     df_valied = logic_validate(df)
-    df_valied = please_work(df_valied)
+    df_valied = dbscan_validate(df_valied)
+    # -- useless
     # df_valied = clust_validation(df_valied)
     # df_valied = nihss_bi_iqr(df_valied)
     # df_valied = curve_validation(df_valied)
@@ -37,7 +38,7 @@ def mRS_validate(df):
     return df_valied
 
 
-def please_work(df):
+def dbscan_validate(df):
     for i in range(0, 6, 1):
         df_temp = df[df['discharged_mrs'] == i]
         df_temp_inx = pd.DataFrame(df_temp.index.values, columns=['indx'])
@@ -104,7 +105,7 @@ def logic_validate(df):
     # print(df.shape)
     return df
 
-
+'''
 def clust_validation(df):
     # http://scikit-learn.org/stable/auto_examples/cluster/plot_dbscan.html
     # https://stackoverflow.com/questions/12893492/choosing-eps-and-minpts-for-dbscan-r
@@ -133,7 +134,7 @@ def clust_validation(df):
     plt.show()
     return df
 
-'''
+
 def dbscan_parameter(X):
     # eps过大，则更多的点会落在核心对象的ϵ - 邻域，此时我们的类别数可能会减少， 本来不应该是一类的样本也会被划为一类。反之则类别数可能会增大，本来是一类的样本却被划分开。
     # min_samples 通常和eps一起调参。在eps一定的情况下，min_samples过大，则核心对象会过少，此时簇内部分本来是一类的样本可能会被标为噪音点，类别数也会变多。反之min_samples过小的话，则会产生大量的核心对象，可能会导致类别数过少。

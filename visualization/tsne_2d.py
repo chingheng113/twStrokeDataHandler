@@ -26,4 +26,8 @@ if __name__ == '__main__':
     plt.figure()
     plt.scatter(df.ix[:,0], df.ix[:,1], c=df.ix[:, 2], s=0.1, cmap=plt.cm.get_cmap("jet", n_class))
     plt.colorbar(ticks=range(n_class))
+    plt.title('t-SNE 2D visualization of Taiwan stoke registry data')
+    plt.xlabel('t-SNE 1')
+    plt.ylabel('t-SNE 2')
+    plt.savefig("t-sne.png", dpi=300)
     plt.show()

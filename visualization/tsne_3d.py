@@ -27,4 +27,5 @@ if __name__ == '__main__':
     fig = plt.figure()
     ax = Axes3D(fig)
     ax.scatter(df.ix[:,0], df.ix[:,1], df.ix[:,2], c=df.ix[:, 3], s = 0.1, cmap=plt.cm.get_cmap("jet", n_class))
+    plt.title('t-SNE 3D visualization')
     plt.show()
