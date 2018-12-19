@@ -49,23 +49,23 @@ df_nih_nbm = df_nih[[n_nih, b_nih, m_nih]]
 df_nih_nbm = df_nih_nbm[df_nih_nbm[m_nih] != 6]
 
 
-
-fig, (ax11, ax12, ax13) = plt.subplots(nrows=1, ncols=3, figsize=(15,5))
+fig, (ax11, ax12) = plt.subplots(nrows=1, ncols=2, figsize=(15,5))
+# fig, (ax11, ax12, ax13) = plt.subplots(nrows=1, ncols=3, figsize=(15,5))
 a1 = ax11.scatter(df_3m[[n,b,m]].ix[:,0], df_3m[[n,b,m]].ix[:,1], c=df_3m[[n,b,m]].ix[:,2], cmap=plt.cm.Spectral)
 # plt.title()
 ax11.set_title('Raw Taiwan stroke registry data')
-# ax11.set_xlabel('Total discharge NIHSS')
+ax11.set_xlabel('Total discharge NIHSS')
 ax11.set_ylabel('Total discharge Barthel Index')
 
 ax12.scatter(df_3m_validated[[n,b,m]].ix[:,0], df_3m_validated[[n,b,m]].ix[:,1], c=df_3m_validated[[n,b,m]].ix[:,2], cmap=plt.cm.Spectral)
 # plt.title()
 ax12.set_title('Validated Taiwan stroke registry data')
 ax12.set_xlabel('Total discharge NIHSS')
-# ax12.set_ylabel('Total discharge Barthel Index')
+ax12.set_ylabel('Total discharge Barthel Index')
 
-ax13.scatter(df_nih_nbm.ix[:,0], df_nih_nbm.ix[:,1], c=df_nih_nbm.ix[:,2], cmap=plt.cm.Spectral)
+# ax13.scatter(df_nih_nbm.ix[:,0], df_nih_nbm.ix[:,1], c=df_nih_nbm.ix[:,2], cmap=plt.cm.Spectral)
 # plt.title('NIH clinical trial data')
-ax13.set_title('NIH clinical trial dataa')
+# ax13.set_title('NIH clinical trial dataa')
 # ax13.set_xlabel('Total discharge NIHSS')
 # ax13.set_ylabel('Total discharge Barthel Index')
 #

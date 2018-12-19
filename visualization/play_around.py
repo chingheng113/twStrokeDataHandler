@@ -33,9 +33,9 @@ if __name__ == '__main__':
     # fig = plt.figure(figsize=(15, 5))
 
     # pu.scatt_plot(df_3m[[n,b,m]])
-    # pu.violin_plot(nih_mrs)
+    pu.violin_plot(df_3m[[m,b]])
     # pu.violin_plot(df_3m_validated[[m, b]])
-    pu.bubble_plot(df_3m_validated, [m, b])
+    # pu.bubble_plot(df_3m_validated, [m, b])
     # df_3m_validated[[m, b]].boxplot(column=[b], by=m)
     # nih_mrs_validated.boxplot(column=['bi_total'], by='nihss_total')
     # plt.title('Original BI/NIHSS')
