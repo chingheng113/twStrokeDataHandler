@@ -1,6 +1,6 @@
 from tools import genral_utils as gu
 from preprocessing import mRS_validator as mv
-from preprocessing import clean_utils2 as clnUtil
+from preprocessing import clean_utils_strokeValidation as clnUtil
 from preprocessing import remove_missing_utils as nomissUtil
 from preprocessing import denormalization_utils as deUtil
 import pandas as pd
