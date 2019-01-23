@@ -55,7 +55,7 @@ def not_icd(ys):
 
 
 def clean_case():
-    fn = 'CASEDCASE-2016-05-2.csv'
+    fn = 'CASEDCASE.csv'
     read_file_path = gu.get_file_path(fn, under_raw=True)
     df_case = pd.read_csv(read_file_path, encoding='utf8')
     # Dropping unused column
@@ -261,11 +261,8 @@ def clean_mcase():
 
 def create_age(df_case, df_mcase):
     df = pd.merge(df_case, df_mcase, on='ICASE_ID')
-    b_day = pd.to_datetime(df['BIRTH_DT'], format='%m/%d/%y', errors='coerce')
-    for i, b in b_day.items():
-        if b.year > 2000:
-            b_day[i] = b_day[i].replace(year=b.year-100)
-    onset_day = pd.to_datetime(df['ONSET_DT'], format='%m/%d/%y', errors='coerce')
+    b_day = pd.to_datetime(df['BIRTH_DT'], format='%Y-%m-%d', errors='coerce')
+    onset_day = pd.to_datetime(df['ONSET_DT'], format='%Y-%m-%d', errors='coerce')
     AGE = np.floor((onset_day - b_day) / pd.Timedelta(days=365))
     df['onset_age'] = AGE
     df = df.drop(['BIRTH_DT', 'ONSET_DT'], axis=1)

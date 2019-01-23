@@ -26,27 +26,35 @@ if __name__ == '__main__':
     # df_rfur = clnUtil.clean_rfur()
     #  ===================== Join datasets
     # dfs = [df_final_case, df_dbmrs, df_ctmr, df_dgfa, df_fahi, df_nihs, df_rfur]
-    # df_joined = reduce(lambda left, right: pd.merge(left, right, on=['ICASE_ID', 'IDCASE_ID']), dfs)
+    # print(df_final_case.shape)
+    # print(df_dbmrs.shape)
+    # print(df_ctmr.shape)
+    # print(df_dgfa.shape)
+    # print(df_fahi.shape)
+    # print(df_nihs.shape)
+    # print(df_rfur.shape)
+    # df_joined = reduce(lambda left, right: pd.merge(left, right, how='outer', on=['ICASE_ID', 'IDCASE_ID']), dfs)
+    # print(df_joined.shape)
     #  ===================== convert feature
     # df_org = clnUtil.convert_features(df_joined)
-    # gu.save_dataframe_to_csv(df_org, 'wholeset_Jim')
+    # gu.save_dataframe_to_csv(df_org, 'TSR_2018_withMissing')
 
     #  ######################################################## 3-month mRS#############################################
     #  ===================== Remove high missing features
-    # df_org = pd.read_csv(gu.get_file_path('wholeset_Jim.csv', under_raw=False), encoding='utf8')
-    # df_3m = nomissUtil.remove_missing_intensive_features(df_org)
-    #  nomissUtil.plot_missing(df_3m)
+    # df_withMissing = pd.read_csv(gu.get_file_path('TSR_2018_withMissing.csv', under_raw=False), encoding='utf8')
+    # df_remove_hing_missing_columns = nomissUtil.remove_missing_intensive_features(df_withMissing)
+    #  nomissUtil.plot_missing(df_remove_hing_missing_columns)
     #  ===================== only 3-month followup
-    # df_3m.drop(['VERS_3', 'VERS_6', 'VERS_12', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12', 'MRS_6', 'MRS_12'], axis=1, inplace=True)
-    #  ===================== Remove NaN data
+    # df_3m = df_remove_hing_missing_columns.drop(['VERS_3', 'VERS_6', 'VERS_12', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12', 'MRS_6', 'MRS_12'], axis=1)
+    #  ===================== Remove NaN observations
     # df_3m.dropna(inplace=True)
-    #  ===================== not include dead subjects
+    #  ===================== Remove dead cases
     # df_3m.drop(df_3m[df_3m.OFF_ID == 2.].index, inplace=True)
     #  ===================== Make dummy variables
     # df_3m = clnUtil.make_dummy(df_3m)
-    # gu.save_dataframe_to_csv(df_3m, 'wholeset_Jim_nomissing')
+    # gu.save_dataframe_to_csv(df_3m, 'TSR_2018_3m_noMissing')
     #  ===================== validated mRS
-    df_3m = pd.read_csv(gu.get_file_path('wholeset_Jim_nomissing.csv', under_raw=False), encoding='utf8')
+    df_3m = pd.read_csv(gu.get_file_path('TSR_2018_3m_noMissing.csv', under_raw=False), encoding='utf8')
     df_3m_validated = mv.mRS_validate(df_3m)
-    # gu.save_dataframe_to_csv(df_3m_validated, 'wholeset_Jim_nomissing_validated')
+    gu.save_dataframe_to_csv(df_3m_validated, 'TSR_2018_3m_noMissing_validated')
     print("Done")

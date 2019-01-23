@@ -175,7 +175,7 @@ def de_casedrfur():
              'VERS_1', 'VERS_3', 'VERS_6', 'VERS_12',
              'VEIHD_1', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12',
              'MRS_1', 'MRS_3', 'MRS_6', 'MRS_12']
-    read_file_path = gu.get_file_path('CASEDRFUR-2016-05-23.csv', under_raw=True)
+    read_file_path = gu.get_file_path('CASEDRFUR.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:

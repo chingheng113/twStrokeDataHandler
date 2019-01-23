@@ -17,7 +17,6 @@ from visualization import plot_utils as pu
 
 
 
-
 def mRS_validate(df):
     df['bi_total'] = pd.DataFrame(np.sum(df[['Feeding', 'Transfers', 'Bathing', 'Toilet_use', 'Grooming', 'Mobility',
                                              'Stairs', 'Dressing', 'Bowel_control', 'Bladder_control']], axis=1))
@@ -27,45 +26,13 @@ def mRS_validate(df):
     df['nihss_total_in'] = pd.DataFrame(np.sum(df[['NIHS_1a_in', 'NIHS_1b_in', 'NIHS_1c_in', 'NIHS_2_in', 'NIHS_3_in', 'NIHS_4_in',
                                                    'NIHS_5aL_in', 'NIHS_5bR_in', 'NIHS_6aL_in', 'NIHS_6bR_in', 'NIHS_7_in', 'NIHS_8_in',
                                                    'NIHS_9_in', 'NIHS_10_in', 'NIHS_11_in']], axis=1))
-
+    # Doing clinical logic validation
     df_valied = logic_validate(df)
-    df_valied = dbscan_validate(df_valied)
-    # -- useless
-    # df_valied = clust_validation(df_valied)
-    # df_valied = nihss_bi_iqr(df_valied)
-    # df_valied = curve_validation(df_valied)
+    # Doing LOWESS regression validation
+    df_valied = lowess_validate_on_BI(df_valied)
+
     df_valied = df_valied.drop(['bi_total', 'nihss_total', 'nihss_total_in'], axis=1)
     return df_valied
-
-
-def dbscan_validate(df):
-    for i in range(0, 6, 1):
-        df_temp = df[df['discharged_mrs'] == i]
-        df_temp_inx = pd.DataFrame(df_temp.index.values, columns=['indx'])
-        bi_mrs = df_temp[['nihss_total', 'bi_total']]
-        bi_mrs['nihss_total'] = MinMaxScaler().fit_transform(bi_mrs['nihss_total'].values.reshape(-1,1))
-        bi_mrs['bi_total'] = MinMaxScaler().fit_transform(bi_mrs['bi_total'].values.reshape(-1,1))
-
-        # Compute DBSCAN
-        mSample = round(bi_mrs.shape[0]/10, 0)
-        db = DBSCAN(eps=0.1, min_samples=mSample).fit(bi_mrs)
-        core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
-        core_samples_mask[db.core_sample_indices_] = True
-        # Noise
-        labels = db.labels_
-        df_temp_inx['clust'] = labels
-        df_temp_inx_noise = df_temp_inx[df_temp_inx['clust'] == -1]
-        print(df_temp_inx_noise.shape)
-        df = df.drop(df_temp_inx_noise['indx'])
-        # Number of clusters in labels, ignoring noise if present.
-        n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
-        print('Estimated number of clusters: %d' % n_clusters_)
-        print("Silhouette Coefficient: %0.3f" % metrics.silhouette_score(bi_mrs, labels))
-        pu.plot_dbscan(db, bi_mrs)
-        print(df.shape)
-    plt.show()
-    return df
-
 
 def logic_validate(df):
     # print(df.shape)
@@ -105,18 +72,43 @@ def logic_validate(df):
     # print(df.shape)
     return df
 
+
+def lowess_validate_on_BI(df):
+    '''the boundaries are given by lowess_clean.R'''
+    upper_bound = [120.59083, 119.46254, 114.40941, 92.63951, 58.66242, 24.06637]
+    lower_bound = [78.59050, 77.46221, 72.40908, 50.63918, 16.66209, -17.93396]
+    # for i in range(6):
+    #     df = df[~((df['discharged_mrs'] == i) & (df['bi_total'] > lower_bound[i]) & (df['bi_total'] < upper_bound[i]))]
+    df0 = df[(df['discharged_mrs'] == 0) & (df['bi_total'] > lower_bound[0]) & (df['bi_total'] < upper_bound[0])]
+    print(df0.shape)
+    df1 = df[(df['discharged_mrs'] == 1) & (df['bi_total'] > lower_bound[1]) & (df['bi_total'] < upper_bound[1])]
+    print(df1.shape)
+    df2 = df[(df['discharged_mrs'] == 2) & (df['bi_total'] > lower_bound[2]) & (df['bi_total'] < upper_bound[2])]
+    print(df2.shape)
+    df3 = df[(df['discharged_mrs'] == 3) & (df['bi_total'] > lower_bound[3]) & (df['bi_total'] < upper_bound[3])]
+    print(df3.shape)
+    df4 = df[(df['discharged_mrs'] == 4) & (df['bi_total'] > lower_bound[4]) & (df['bi_total'] < upper_bound[4])]
+    print(df4.shape)
+    df5 = df[(df['discharged_mrs'] == 5) & (df['bi_total'] > lower_bound[5]) & (df['bi_total'] < upper_bound[5])]
+    print(df5.shape)
+    df_final = pd.concat([df0, df1, df2, df3, df4, df5])
+    return df_final
+
+
+
 '''
-def clust_validation(df):
-    # http://scikit-learn.org/stable/auto_examples/cluster/plot_dbscan.html
-    # https://stackoverflow.com/questions/12893492/choosing-eps-and-minpts-for-dbscan-r
-    print(df.shape)
+# Abandoned...
+def dbscan_validate(df):
     for i in range(0, 6, 1):
         df_temp = df[df['discharged_mrs'] == i]
         df_temp_inx = pd.DataFrame(df_temp.index.values, columns=['indx'])
-        bi_mrs = df_temp[['discharged_mrs', 'bi_total']]
+        bi_mrs = df_temp[['nihss_total', 'bi_total']]
+        bi_mrs['nihss_total'] = MinMaxScaler().fit_transform(bi_mrs['nihss_total'].values.reshape(-1,1))
+        bi_mrs['bi_total'] = MinMaxScaler().fit_transform(bi_mrs['bi_total'].values.reshape(-1,1))
+
         # Compute DBSCAN
-        mSample = round(bi_mrs.shape[0]/5, 0)
-        db = DBSCAN(eps=5, min_samples=mSample).fit(bi_mrs)
+        mSample = round(bi_mrs.shape[0]/10, 0)
+        db = DBSCAN(eps=0.1, min_samples=mSample).fit(bi_mrs)
         core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
         core_samples_mask[db.core_sample_indices_] = True
         # Noise
@@ -132,86 +124,5 @@ def clust_validation(df):
         pu.plot_dbscan(db, bi_mrs)
         print(df.shape)
     plt.show()
-    return df
-
-
-def dbscan_parameter(X):
-    # eps过大，则更多的点会落在核心对象的ϵ - 邻域，此时我们的类别数可能会减少， 本来不应该是一类的样本也会被划为一类。反之则类别数可能会增大，本来是一类的样本却被划分开。
-    # min_samples 通常和eps一起调参。在eps一定的情况下，min_samples过大，则核心对象会过少，此时簇内部分本来是一类的样本可能会被标为噪音点，类别数也会变多。反之min_samples过小的话，则会产生大量的核心对象，可能会导致类别数过少。
-    # ns = 2
-    # nbrs = NearestNeighbors(n_neighbors=ns).fit(X)
-    # distances, indices = nbrs.kneighbors(X)
-    # distanceDec = sorted(distances[:, ns - 1], reverse=True)
-    # plt.plot(list(range(1, X.shape[0] + 1)), distanceDec, 'bx')
-
-    # distortions = []
-    # K = range(1, 20)
-    # for k in K:
-    #     kmeanModel = KMeans(n_clusters=k).fit(X)
-    #     kmeanModel.fit(X)
-    #     distortions.append(sum(np.min(cdist(X, kmeanModel.cluster_centers_, 'euclidean'), axis=1)) / X.shape[0])
-    # # Plot the elbow
-    # fig = plt.figure(figsize=(15, 5))
-    # plt.grid(True)
-    # plt.plot(K, distortions,  'bx-')
-    # plt.xlabel('k')
-    # plt.ylabel('Distortion')
-    # plt.title('The Elbow Method showing the optimal k')
-
-    # min_samples
-    # labels, values = zip(*Counter(X['bi_total']).items())
-    labels, values = zip(*Counter(X['bi_total']).most_common())
-    indexes = np.arange(len(labels))
-    width = 0.5
-    fig = plt.figure(figsize=(15, 5))
-    plt.bar(indexes, values, width)
-
-
-def curve_validation(df):
-    # -- Polyfit
-    # https: // www.scipy - lectures.org / intro / numpy / auto_examples / plot_polyfit.html
-    p = np.poly1d(np.polyfit(df['nihss_total'], df['bi_total'], 2))
-    t = np.linspace(min(df['nihss_total']), max(df['nihss_total']), len(df['nihss_total']) * 1000)
-    plt.plot(df['nihss_total'], df['bi_total'], 'o', t, p(t), '-')
-    plt.xlabel("nihss_total")
-    plt.ylabel("bi_total")
-    plt.show()
-    # ----- Curve Fit
-    # popt, pcov = curve_fit(func, df['nihss_total'], df['bi_total'])
-    # plt.plot(df['nihss_total'], df['bi_total'], 'o')
-    # y2 = [func(i, popt[0], popt[1], popt[2]) for i in df['nihss_total']]
-    # plt.plot(df['nihss_total'], y2, 'o')
-    # plt.xlabel("nihss_total")
-    # plt.ylabel("bi_total")
-    # plt.show()
-    # --- Hyperbolic Fit
-    # https: // github.com / jimrybarski / biofits
-    # perform the fit
-    x_data = df['nihss_total']
-    y_data = df['bi_total']
-    yint, yint_stddev, delta_y, delta_y_stddev, kd, kd_stddev = fit_hyperbola(x_data, y_data)
-    x = np.linspace(min(x_data), max(x_data), len(x_data) * 1000)
-    y = hyperbola(x, yint, delta_y, kd)
-    plt.figure(figsize=(5, 5))
-    plt.plot(x, y, label='fit', zorder=0)
-    plt.plot(x_data, y_data, 'o', label='data', markersize=4)
-    plt.xlabel("nihss_total")
-    plt.ylabel("bi_total")
-    plt.show()
-    return df
-
-
-def func(x, a, b, c):
-    return a * np.exp(-b * x) + c
-
-
-def nihss_bi_iqr(df):
-    # nih_mrs = df[['nihss_total', 'bi_total']]
-    s = int(min(df['nihss_total']))
-    e = int(max(df['nihss_total']))
-    for i in range(s, e, 1):
-        df_partial = df[df['nihss_total']==i]
-        is_outlier = clnUtil.outliers_iqr(df_partial["bi_total"])
-        df.drop(df_partial[is_outlier].index, inplace=True)
     return df
 '''
