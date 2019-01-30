@@ -36,8 +36,8 @@ if __name__ == '__main__':
     # df_joined = reduce(lambda left, right: pd.merge(left, right, how='outer', on=['ICASE_ID', 'IDCASE_ID']), dfs)
     # print(df_joined.shape)
     #  ===================== convert feature
-    # df_org = clnUtil.convert_features(df_joined)
-    # gu.save_dataframe_to_csv(df_org, 'TSR_2018_withMissing')
+    # df_withMissing = clnUtil.convert_features(df_joined)
+    # gu.save_dataframe_to_csv(df_withMissing, 'TSR_2018_withMissing')
 
     #  ######################################################## 3-month mRS#############################################
     #  ===================== Remove high missing features
