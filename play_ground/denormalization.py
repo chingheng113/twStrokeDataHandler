@@ -1,19 +1,6 @@
 from tools import genral_utils as gu
 import csv
 
-def get_hist_value(parents_v, brsi_v):
-        # 0-no; 1-yes; 2-down't know; 9-no sibling
-        if parents_v == '0' and (brsi_v == '0' or brsi_v == '9'):
-            return 0 # 父母兄弟姐妹皆無
-        elif parents_v == '0' and brsi_v == '1':
-            return 1 # 兄弟姐妹有, 父母無
-        elif parents_v == '1' and (brsi_v == '0' or brsi_v == '9'):
-            return 2 # 兄弟姐妹無, 父母有
-        elif parents_v == '1' and brsi_v == '1':
-            return 3 # 父母兄弟姐妹皆有
-        else:
-            return ""
-
 
 def de_casedbmrs():
     patients_dic = {}
@@ -140,71 +127,178 @@ def de_casedctmr():
     gu.save_array_to_csv('CASEDCTMR_1(denormalized)', title, patients_dic, under_raw=True)
 
 
-# def de_casedfahi():
-#     patients_dic = {}
-#     title = ['ICASE_ID', 'IDCASE_ID', 'FH_HBP', 'FH_DB', 'FH_HD', 'FH_ST']
-#     diseace_code = {
-#                     '1': 'FH_HBP',
-#                     '2': 'FH_DB',
-#                     '3': 'FH_HD',
-#                     '4': 'FH_ST'}
-#     read_file_path = gu.get_file_path('CASEDFAHI.csv', under_raw=True)
-#     with open(read_file_path, 'r', encoding='utf8') as csvfile:
-#         reader = csv.DictReader(csvfile)
-#         for row in reader:
-#             icase_id = row['ICASE_ID']
-#             idcase_id = row['IDCASE_ID']
-#             combind_id = icase_id + idcase_id
-#             fahiid_id = row['FAHIID_ID']
-#             parents_v = row['PARENTS_CD']
-#             brsi_v = row['BRSI_CD']
-#             if combind_id in patients_dic.keys():
-#                 key = diseace_code.get(fahiid_id)
-#                 patients_dic.get(combind_id)[key] = get_hist_value(parents_v, brsi_v)
-#             else:
-#                 # initial a patient's dictionary
-#                 p_dic = {'ICASE_ID': icase_id, 'IDCASE_ID': idcase_id, 'FH_HBP': '', 'FH_DB': '', 'FH_HD': '',
-#                          'FH_ST': ''}
-#                 key = diseace_code.get(fahiid_id)
-#                 p_dic[key] = get_hist_value(parents_v, brsi_v)
-#                 patients_dic[combind_id] = p_dic
-#     gu.save_array_to_csv('CASEDFAHI(denormalized)', title, patients_dic, under_raw=True)
+def de_casedfahi():
+    patients_dic_1 = {}
+    patients_dic_2 = {}
+    title_1 = ['ICASE_ID', 'IDCASE_ID', 'GUID_TSYM', 'FAHIID_PARENTS_1', 'FAHIID_PARENTS_2', 'FAHIID_PARENTS_3', 'FAHIID_PARENTS_4']
+    diseace_code = {
+                    '1': 'FAHIID_PARENTS_1',
+                    '2': 'FAHIID_PARENTS_2',
+                    '3': 'FAHIID_PARENTS_3',
+                    '4': 'FAHIID_PARENTS_4'}
+    read_file_path = gu.get_file_path('CASEDFAHI_1.csv', under_raw=True)
+    with open(read_file_path, 'r', encoding='utf8', errors='ignore') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            icase_id = row['ICASE_ID']
+            idcase_id = row['IDCASE_ID']
+            combind_id = icase_id + idcase_id
+            fahiid_id = row['FAHIID_ID']
+            parents_v = row['PARENTS_CD']
+            guid = row['GUID_TSYM']
+            if combind_id in patients_dic_1.keys():
+                key = diseace_code.get(fahiid_id)
+                patients_dic_1.get(combind_id)[key] = parents_v
+            else:
+                # initial a patient's dictionary
+                p_dic = {'ICASE_ID': icase_id, 'IDCASE_ID': idcase_id, 'GUID_TSYM': guid,
+                         'FAHIID_PARENTS_1': '', 'FAHIID_PARENTS_2': '', 'FAHIID_PARENTS_3': '', 'FAHIID_PARENTS_4': ''}
+                key = diseace_code.get(fahiid_id)
+                p_dic[key] = parents_v
+                patients_dic_1[combind_id] = p_dic
+    # ==
+    title_2 = ['ICASE_ID', 'IDCASE_ID', 'GUID_TSYM', 'FAHIID_BRSI_1', 'FAHIID_BRSI_2', 'FAHIID_BRSI_3', 'FAHIID_BRSI_4']
+    diseace_code = {
+        '1': 'FAHIID_BRSI_1',
+        '2': 'FAHIID_BRSI_2',
+        '3': 'FAHIID_BRSI_3',
+        '4': 'FAHIID_BRSI_4'}
+    read_file_path = gu.get_file_path('CASEDFAHI_1.csv', under_raw=True)
+    with open(read_file_path, 'r', encoding='utf8', errors='ignore') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            icase_id = row['ICASE_ID']
+            idcase_id = row['IDCASE_ID']
+            combind_id = icase_id + idcase_id
+            fahiid_id = row['FAHIID_ID']
+            brsi_v = row['BRSI_CD']
+            guid = row['GUID_TSYM']
+            if combind_id in patients_dic_2.keys():
+                key = diseace_code.get(fahiid_id)
+                patients_dic_2.get(combind_id)[key] = brsi_v
+            else:
+                # initial a patient's dictionary
+                p_dic = {'ICASE_ID': icase_id, 'IDCASE_ID': idcase_id, 'GUID_TSYM': guid,
+                         'FAHIID_BRSI_1': '', 'FAHIID_BRSI_2': '', 'FAHIID_BRSI_3': '', 'FAHIID_BRSI_4': ''}
+                key = diseace_code.get(fahiid_id)
+                p_dic[key] = brsi_v
+                patients_dic_2[combind_id] = p_dic
+
+    title = ['ICASE_ID', 'IDCASE_ID', 'GUID_TSYM', 'FAHIID_PARENTS_1', 'FAHIID_PARENTS_2', 'FAHIID_PARENTS_3',
+               'FAHIID_PARENTS_4', 'FAHIID_BRSI_1', 'FAHIID_BRSI_2', 'FAHIID_BRSI_3', 'FAHIID_BRSI_4']
+    patients_dic = {}
+    if len(patients_dic_1) == len(patients_dic_2):
+        for k in patients_dic_1.keys():
+            dic_1 = patients_dic_1[k]
+            dic_2 = patients_dic_2[k]
+            patients_dic[k] = {**dic_1, **dic_2}
+    gu.save_array_to_csv('CASEDFAHI_1(denormalized)', title, patients_dic, under_raw=True)
 
 
-# def de_casedrfur():
-#     patients_dic = {}
-#     title = ['ICASE_ID', 'IDCASE_ID', 'GUID_TSYM',
-#              'VERS_1', 'VERS_3', 'VERS_6', 'VERS_12',
-#              'VEIHD_1', 'VEIHD_3', 'VEIHD_6', 'VEIHD_12',
-#              'MRS_1', 'MRS_3', 'MRS_6', 'MRS_12']
-#     read_file_path = gu.get_file_path('CASEDRFUR_1.csv', under_raw=True)
-#     with open(read_file_path, 'r', encoding='utf8', errors='replace') as csvfile:
-#         reader = csv.DictReader(csvfile)
-#         for row in reader:
-#             icase_id = row['ICASE_ID']
-#             idcase_id = row['IDCASE_ID']
-#             combind_id = icase_id + idcase_id
-#             guid = row['GUID_TSYM']
-#             rfur_nm = row['RFUR_NM']
-#             vers_fl = row['VERS_FL']
-#             veihd_fl = row['VEIHD_FL']
-#             mrs_tx = row['MRS_TX']
-#             if combind_id in patients_dic.keys():
-#                 patients_dic.get(combind_id)['VERS_' + rfur_nm] = vers_fl
-#                 patients_dic.get(combind_id)['VEIHD_' + rfur_nm] = veihd_fl
-#                 patients_dic.get(combind_id)['MRS_' + rfur_nm] = mrs_tx
-#             else:
-#                 # initial a patient's dictionary
-#                 p_dic = {'ICASE_ID': icase_id, 'IDCASE_ID': idcase_id, 'GUID_TSYM':guid,
-#                          'VERS_1': '',
-#                          'VERS_3': '', 'VERS_6': '', 'VERS_12': '','VEIHD_1': '',
-#                          'VEIHD_3': '', 'VEIHD_6': '', 'VEIHD_12': '',
-#                          'MRS_1': '', 'MRS_3': '', 'MRS_6': '', 'MRS_12': ''}
-#                 p_dic['VERS_' + rfur_nm] = vers_fl
-#                 p_dic['VEIHD_' + rfur_nm] = veihd_fl
-#                 p_dic['MRS_' + rfur_nm] = mrs_tx
-#                 patients_dic[combind_id] = p_dic
-#     gu.save_array_to_csv('CASEDRFUR_1(denormalized)', title, patients_dic, under_raw=True)
+def de_casedrfur():
+    patients_dic = {}
+    title = ['ICASE_ID', 'IDCASE_ID', 'GUID_TSYM',
+              'FSTATUS_ID_1', 'RFUR_DT_1', 'LOCATION_ID_1', 'TORG_ID_1', 'FLU_ID_1', 'FLUORG_ID_1', 'FLUORG_TX_1', 'FLURESULT_TX_1', 'DEATH_DT_1', 'DEATH_ID_1', 'DEATHSK_ID_1', 'DEATHO_TX_1', 'VE_ID_1', 'VERS_FL_1', 'VERSCICH_ID_1', 'VERS_DT_1', 'VERSORG_ID_1', 'VEIHD_FL_1', 'VEIHD_ID_1', 'VEIHD_DT_1', 'VEIHDORG_ID_1', 'MRS_TX_1', 'TORG_TX_1', 'VERSORG_TX_1', 'VEIHDORG_TX_1',
+              'FSTATUS_ID_3', 'RFUR_DT_3', 'LOCATION_ID_3', 'TORG_ID_3', 'FLU_ID_3', 'FLUORG_ID_3', 'FLUORG_TX_3', 'FLURESULT_TX_3', 'DEATH_DT_3', 'DEATH_ID_3', 'DEATHSK_ID_3', 'DEATHO_TX_3', 'VE_ID_3', 'VERS_FL_3', 'VERSCICH_ID_3', 'VERS_DT_3', 'VERSORG_ID_3', 'VEIHD_FL_3', 'VEIHD_ID_3', 'VEIHD_DT_3', 'VEIHDORG_ID_3', 'MRS_TX_3', 'TORG_TX_3', 'VERSORG_TX_3', 'VEIHDORG_TX_3',
+             'FSTATUS_ID_6', 'RFUR_DT_6', 'LOCATION_ID_6', 'TORG_ID_6', 'FLU_ID_6', 'FLUORG_ID_6', 'FLUORG_TX_6', 'FLURESULT_TX_6', 'DEATH_DT_6', 'DEATH_ID_6', 'DEATHSK_ID_6', 'DEATHO_TX_6', 'VE_ID_6', 'VERS_FL_6', 'VERSCICH_ID_6', 'VERS_DT_6', 'VERSORG_ID_6', 'VEIHD_FL_6', 'VEIHD_ID_6', 'VEIHD_DT_6', 'VEIHDORG_ID_6', 'MRS_TX_6', 'TORG_TX_6', 'VERSORG_TX_6', 'VEIHDORG_TX_6',
+             'FSTATUS_ID_12', 'RFUR_DT_12', 'LOCATION_ID_12', 'TORG_ID_12', 'FLU_ID_12', 'FLUORG_ID_12', 'FLUORG_TX_12', 'FLURESULT_TX_12', 'DEATH_DT_12', 'DEATH_ID_12', 'DEATHSK_ID_12', 'DEATHO_TX_12', 'VE_ID_12', 'VERS_FL_12', 'VERSCICH_ID_12', 'VERS_DT_12', 'VERSORG_ID_12', 'VEIHD_FL_12', 'VEIHD_ID_12', 'VEIHD_DT_12', 'VEIHDORG_ID_12', 'MRS_TX_12', 'TORG_TX_12', 'VERSORG_TX_12', 'VEIHDORG_TX_12'
+             ]
+    read_file_path = gu.get_file_path('CASEDRFUR_1.csv', under_raw=True)
+    with open(read_file_path, 'r', encoding='utf8', errors='replace') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            icase_id = row['ICASE_ID']
+            idcase_id = row['IDCASE_ID']
+            combind_id = icase_id + idcase_id
+            guid = row['GUID_TSYM']
+            rfur_nm = row['RFUR_NM']
+            fstatus_id = row['FSTATUS_ID']
+            rfur_dt = row['RFUR_DT']
+            location_id = row['LOCATION_ID']
+            torg_id = row['TORG_ID']
+            flu_id = row['FLU_ID']
+            fluorg_id = row['FLUORG_ID']
+            fluorg_tx = row['FLUORG_TX']
+            fluresult_tx = row['FLURESULT_TX']
+            death_dt = row['DEATH_DT']
+            death_id = row['DEATH_ID']
+            deathsk_id = row['DEATHSK_ID']
+            deatho_tx = row['DEATHO_TX']
+            ve_id = row['VE_ID']
+            vers_fl = row['VERS_FL']
+            verscich_id = row['VERSCICH_ID']
+            vers_dt = row['VERS_DT']
+            versorg_id = row['VERSORG_ID']
+            veihd_fl = row['VEIHD_FL']
+            veihd_id = row['VEIHD_ID']
+            veihd_dt = row['VEIHD_DT']
+            veihdorg_id = row['VEIHDORG_ID']
+            mrs_tx = row['MRS_TX']
+            torg_tx = row['TORG_TX']
+            versorg_tx = row['VERSORG_TX']
+            veihdorg_tx = row['VEIHDORG_TX']
+
+            if combind_id in patients_dic.keys():
+                patients_dic.get(combind_id)['FSTATUS_ID_' + rfur_nm] = fstatus_id
+                patients_dic.get(combind_id)['RFUR_DT_' + rfur_nm] = rfur_dt
+                patients_dic.get(combind_id)['LOCATION_ID_' + rfur_nm] = location_id
+                patients_dic.get(combind_id)['TORG_ID_' + rfur_nm] = torg_id
+                patients_dic.get(combind_id)['FLU_ID_' + rfur_nm] = flu_id
+                patients_dic.get(combind_id)['FLUORG_ID_' + rfur_nm] = fluorg_id
+                patients_dic.get(combind_id)['FLUORG_TX_' + rfur_nm] = fluorg_tx
+                patients_dic.get(combind_id)['FLURESULT_TX_' + rfur_nm] = fluresult_tx
+                patients_dic.get(combind_id)['DEATH_DT_' + rfur_nm] = death_dt
+                patients_dic.get(combind_id)['DEATH_ID_' + rfur_nm] = death_id
+                patients_dic.get(combind_id)['DEATHSK_ID_' + rfur_nm] = deathsk_id
+                patients_dic.get(combind_id)['DEATHO_TX_' + rfur_nm] = deatho_tx
+                patients_dic.get(combind_id)['VE_ID_' + rfur_nm] = ve_id
+                patients_dic.get(combind_id)['VERS_FL_' + rfur_nm] = vers_fl
+                patients_dic.get(combind_id)['VERSCICH_ID_' + rfur_nm] = verscich_id
+                patients_dic.get(combind_id)['VERS_DT_' + rfur_nm] = vers_dt
+                patients_dic.get(combind_id)['VERSORG_ID_' + rfur_nm] = versorg_id
+                patients_dic.get(combind_id)['VEIHD_FL_' + rfur_nm] = veihd_fl
+                patients_dic.get(combind_id)['VEIHD_ID_' + rfur_nm] = veihd_id
+                patients_dic.get(combind_id)['VEIHD_DT_' + rfur_nm] = veihd_dt
+                patients_dic.get(combind_id)['VEIHDORG_ID_' + rfur_nm] = veihdorg_id
+                patients_dic.get(combind_id)['MRS_TX_' + rfur_nm] = mrs_tx
+                patients_dic.get(combind_id)['TORG_TX_' + rfur_nm] = torg_tx
+                patients_dic.get(combind_id)['VERSORG_TX_' + rfur_nm] = versorg_tx
+                patients_dic.get(combind_id)['VEIHDORG_TX_' + rfur_nm] = veihdorg_tx
+            else:
+                # initial a patient's dictionary
+                p_dic = {'ICASE_ID': icase_id, 'IDCASE_ID': idcase_id, 'GUID_TSYM': guid,
+                         'FSTATUS_ID_1': '', 'RFUR_DT_1': '', 'LOCATION_ID_1': '', 'TORG_ID_1': '', 'FLU_ID_1': '', 'FLUORG_ID_1': '', 'FLUORG_TX_1': '', 'FLURESULT_TX_1': '', 'DEATH_DT_1': '', 'DEATH_ID_1': '', 'DEATHSK_ID_1': '', 'DEATHO_TX_1': '', 'VE_ID_1': '', 'VERS_FL_1': '', 'VERSCICH_ID_1': '', 'VERS_DT_1': '', 'VERSORG_ID_1': '', 'VEIHD_FL_1': '', 'VEIHD_ID_1': '', 'VEIHD_DT_1': '', 'VEIHDORG_ID_1': '', 'MRS_TX_1': '', 'TORG_TX_1': '', 'VERSORG_TX_1': '', 'VEIHDORG_TX_1': '',
+                         'FSTATUS_ID_3': '', 'RFUR_DT_3': '', 'LOCATION_ID_3': '', 'TORG_ID_3': '', 'FLU_ID_3': '', 'FLUORG_ID_3': '', 'FLUORG_TX_3': '', 'FLURESULT_TX_3': '', 'DEATH_DT_3': '', 'DEATH_ID_3': '', 'DEATHSK_ID_3': '', 'DEATHO_TX_3': '', 'VE_ID_3': '', 'VERS_FL_3': '', 'VERSCICH_ID_3': '', 'VERS_DT_3': '', 'VERSORG_ID_3': '', 'VEIHD_FL_3': '', 'VEIHD_ID_3': '', 'VEIHD_DT_3': '', 'VEIHDORG_ID_3': '', 'MRS_TX_3': '', 'TORG_TX_3': '', 'VERSORG_TX_3': '', 'VEIHDORG_TX_3': '',
+                         'FSTATUS_ID_6': '', 'RFUR_DT_6': '', 'LOCATION_ID_6': '', 'TORG_ID_6': '', 'FLU_ID_6': '', 'FLUORG_ID_6': '', 'FLUORG_TX_6': '', 'FLURESULT_TX_6': '', 'DEATH_DT_6': '', 'DEATH_ID_6': '', 'DEATHSK_ID_6': '', 'DEATHO_TX_6': '', 'VE_ID_6': '', 'VERS_FL_6': '', 'VERSCICH_ID_6': '', 'VERS_DT_6': '', 'VERSORG_ID_6': '', 'VEIHD_FL_6': '', 'VEIHD_ID_6': '', 'VEIHD_DT_6': '', 'VEIHDORG_ID_6': '', 'MRS_TX_6': '', 'TORG_TX_6': '', 'VERSORG_TX_6': '', 'VEIHDORG_TX_6': '',
+                         'FSTATUS_ID_12': '', 'RFUR_DT_12': '', 'LOCATION_ID_12': '', 'TORG_ID_12': '', 'FLU_ID_12': '', 'FLUORG_ID_12': '', 'FLUORG_TX_12': '', 'FLURESULT_TX_12': '', 'DEATH_DT_12': '', 'DEATH_ID_12': '', 'DEATHSK_ID_12': '', 'DEATHO_TX_12': '', 'VE_ID_12': '', 'VERS_FL_12': '', 'VERSCICH_ID_12': '', 'VERS_DT_12': '', 'VERSORG_ID_12': '', 'VEIHD_FL_12': '', 'VEIHD_ID_12': '', 'VEIHD_DT_12': '', 'VEIHDORG_ID_12': '', 'MRS_TX_12': '', 'TORG_TX_12': '', 'VERSORG_TX_12': '', 'VEIHDORG_TX_12': ''
+                         }
+                p_dic['FSTATUS_ID_' + rfur_nm] = fstatus_id
+                p_dic['RFUR_DT_' + rfur_nm] = rfur_dt
+                p_dic['LOCATION_ID_' + rfur_nm] = location_id
+                p_dic['TORG_ID_' + rfur_nm] = torg_id
+                p_dic['FLU_ID_' + rfur_nm] = flu_id
+                p_dic['FLUORG_ID_' + rfur_nm] = fluorg_id
+                p_dic['FLUORG_TX_' + rfur_nm] = fluorg_tx
+                p_dic['FLURESULT_TX_' + rfur_nm] = fluresult_tx
+                p_dic['DEATH_DT_' + rfur_nm] = death_dt
+                p_dic['DEATH_ID_' + rfur_nm] = death_id
+                p_dic['DEATHSK_ID_' + rfur_nm] = deathsk_id
+                p_dic['DEATHO_TX_' + rfur_nm] = deatho_tx
+                p_dic['VE_ID_' + rfur_nm] = ve_id
+                p_dic['VERS_FL_' + rfur_nm] = vers_fl
+                p_dic['VERSCICH_ID_' + rfur_nm] = verscich_id
+                p_dic['VERS_DT_' + rfur_nm] = vers_dt
+                p_dic['VERSORG_ID_' + rfur_nm] = versorg_id
+                p_dic['VEIHD_FL_' + rfur_nm] = veihd_fl
+                p_dic['VEIHD_ID_' + rfur_nm] = veihd_id
+                p_dic['VEIHD_DT_' + rfur_nm] = veihd_dt
+                p_dic['VEIHDORG_ID_' + rfur_nm] = veihdorg_id
+                p_dic['MRS_TX_' + rfur_nm] = mrs_tx
+                p_dic['TORG_TX_' + rfur_nm] = torg_tx
+                p_dic['VERSORG_TX_' + rfur_nm] = versorg_tx
+                p_dic['VEIHDORG_TX_' + rfur_nm] = veihdorg_tx
+                patients_dic[combind_id] = p_dic
+    gu.save_array_to_csv('CASEDRFUR_1(denormalized)', title, patients_dic, under_raw=True)
 
 
 def de_casednihs():
@@ -265,4 +359,4 @@ def de_casednihs():
 
 
 if __name__ == '__main__':
-    de_casednihs()
+    de_casedrfur()
