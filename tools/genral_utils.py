@@ -21,7 +21,7 @@ def get_file_path(file_name, under_raw):
 
 def save_array_to_csv(file_name, title, patients_dic, under_raw):
     write_file_path = get_file_path(file_name+'.csv', under_raw)
-    with open(write_file_path, 'w', encoding="utf-8", newline='') as write_csv:
+    with open(write_file_path, 'w', encoding="utf_8_sig", newline='') as write_csv:
         w = csv.DictWriter(write_csv, title)
         w.writeheader()
         for d in patients_dic.keys():

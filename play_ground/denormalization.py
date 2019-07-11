@@ -359,4 +359,8 @@ def de_casednihs():
 
 
 if __name__ == '__main__':
+    de_casedbmrs()
+    de_casedctmr()
+    de_casedfahi()
     de_casedrfur()
+    de_casednihs()
