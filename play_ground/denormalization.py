@@ -17,7 +17,7 @@ def de_casedbmrs():
                 '9': 'Bowel_control',
                 '10': 'Bladder_control',
                 '11': 'discharged_mrs'}
-    read_file_path = gu.get_file_path('CASEDBMRS_1.csv', under_raw=True)
+    read_file_path = gu.get_file_path('CASEDBMRS.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -67,8 +67,8 @@ def de_casedctmr():
                 '10': 'Hemorrhagic_infarct',
                 '11': 'Old_stroke'}
 
-    read_file_path = gu.get_file_path('CASEDCTMR_1.csv', under_raw=True)
-    with open(read_file_path, 'r', encoding='utf8') as csvfile:
+    read_file_path = gu.get_file_path('CASEDCTMR.csv', under_raw=True)
+    with open(read_file_path, 'r', encoding='utf16') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             icase_id = row['ICASE_ID']
@@ -163,7 +163,7 @@ def de_casedfahi():
         '2': 'FAHIID_BRSI_2',
         '3': 'FAHIID_BRSI_3',
         '4': 'FAHIID_BRSI_4'}
-    read_file_path = gu.get_file_path('CASEDFAHI_1.csv', under_raw=True)
+    read_file_path = gu.get_file_path('CASEDFAHI.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8', errors='ignore') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -203,7 +203,7 @@ def de_casedrfur():
              'FSTATUS_ID_6', 'RFUR_DT_6', 'LOCATION_ID_6', 'TORG_ID_6', 'FLU_ID_6', 'FLUORG_ID_6', 'FLUORG_TX_6', 'FLURESULT_TX_6', 'DEATH_DT_6', 'DEATH_ID_6', 'DEATHSK_ID_6', 'DEATHO_TX_6', 'VE_ID_6', 'VERS_FL_6', 'VERSCICH_ID_6', 'VERS_DT_6', 'VERSORG_ID_6', 'VEIHD_FL_6', 'VEIHD_ID_6', 'VEIHD_DT_6', 'VEIHDORG_ID_6', 'MRS_TX_6', 'TORG_TX_6', 'VERSORG_TX_6', 'VEIHDORG_TX_6',
              'FSTATUS_ID_12', 'RFUR_DT_12', 'LOCATION_ID_12', 'TORG_ID_12', 'FLU_ID_12', 'FLUORG_ID_12', 'FLUORG_TX_12', 'FLURESULT_TX_12', 'DEATH_DT_12', 'DEATH_ID_12', 'DEATHSK_ID_12', 'DEATHO_TX_12', 'VE_ID_12', 'VERS_FL_12', 'VERSCICH_ID_12', 'VERS_DT_12', 'VERSORG_ID_12', 'VEIHD_FL_12', 'VEIHD_ID_12', 'VEIHD_DT_12', 'VEIHDORG_ID_12', 'MRS_TX_12', 'TORG_TX_12', 'VERSORG_TX_12', 'VEIHDORG_TX_12'
              ]
-    read_file_path = gu.get_file_path('CASEDRFUR_1.csv', under_raw=True)
+    read_file_path = gu.get_file_path('CASEDRFUR.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8', errors='replace') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -325,7 +325,7 @@ def de_casednihs():
         '9': 'NIHS_9',
         '10': 'NIHS_10',
         '11': 'NIHS_11'}
-    read_file_path = gu.get_file_path('CASEDNIHS_1.csv', under_raw=True)
+    read_file_path = gu.get_file_path('CASEDNIHS.csv', under_raw=True)
     with open(read_file_path, 'r', encoding='utf8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -359,7 +359,7 @@ def de_casednihs():
 
 
 if __name__ == '__main__':
-    de_casedbmrs()
+    # de_casedbmrsrs()
     de_casedctmr()
     de_casedfahi()
     de_casedrfur()
